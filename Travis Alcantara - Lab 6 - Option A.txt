@@ -1,0 +1,586 @@
+//
+//  main.cpp
+//  Lab-6-ClassyCasino
+//
+//  Created by Travis Alcantara on 5/23/18.
+//  Copyright © 2018 Travis Alcantara. All rights reserved.
+//
+
+#include <iostream>
+#include <string>
+using namespace std;
+
+// Class prototype
+class TripleString
+{
+private:
+   string string1;
+   string string2;
+   string string3;
+
+   bool validString(string str);
+
+public:
+   static const int MAX_LEN = 20;
+
+   TripleString();
+
+   bool setString1(string str);
+   bool setString2(string str);
+   bool setString3(string str);
+
+   string getString1();
+   string getString2();
+   string getString3();
+};
+
+// Global method prototypes
+int getBet();
+TripleString pull();
+string randString();
+int getPayMultiplier(TripleString thePull);
+void display(TripleString thePull, int winnings);
+
+int main()
+{
+   const int QUITTING_BET = 0;
+   int userBet, multiplier, winnings;
+   TripleString thePull;
+
+   do {
+      userBet = getBet();
+
+      if (userBet == QUITTING_BET)
+         break;
+
+      thePull = pull();
+      multiplier = getPayMultiplier(thePull);
+      winnings = userBet * multiplier;
+
+      display(thePull, winnings);
+   }
+   while(userBet != QUITTING_BET);
+
+   return 0;
+}
+
+// Global method definitions
+int getBet()
+{
+   const int VALID_QUIT_BET = 0;
+   const int VALID_MIN_BET = 1;
+   const int VALID_MAX_BET = 20;
+   string strUserInput;
+   int userBet;
+
+   do {
+      cout << "How much would you like to bet (" << VALID_MIN_BET << " - ";
+      cout << VALID_MAX_BET << ") OR " << VALID_QUIT_BET << " to quit? ";
+      getline(cin, strUserInput);
+      userBet = stoi(strUserInput);
+   }
+   while(userBet < VALID_QUIT_BET || userBet > VALID_MAX_BET);
+
+   return userBet;
+}
+
+TripleString pull()
+{
+   TripleString tripleStringObj;
+   string string1 = randString();
+   string string2 = randString();
+   string string3 = randString();
+
+   tripleStringObj.setString1(string1);
+   tripleStringObj.setString2(string2);
+   tripleStringObj.setString3(string3);
+
+   return tripleStringObj;
+}
+
+string randString()
+{
+   const int MAX_VAL_FOR_BAR = 40;
+   const int MAX_VAL_FOR_CHERRIES = 70;
+   const int MAX_VAL_FOR_SEVEN = 95;
+
+   // Generate random number 1 to 100
+   int randInt = rand() % 100 + 1;
+   string randString;
+
+   if (randInt <= MAX_VAL_FOR_BAR) {
+      randString = "BAR";
+   }
+   else if (randInt <= MAX_VAL_FOR_CHERRIES) {
+      randString = "cherries";
+   }
+   else if (randInt <= MAX_VAL_FOR_SEVEN) {
+      randString = "7";
+   }
+   else {
+      randString = "space";
+   }
+
+   return randString;
+}
+
+int getPayMultiplier(TripleString thePull)
+{
+   const int LEVEL_ONE_MULTIPLIER = 5;
+   const int LEVEL_TWO_MULTIPLIER = 15;
+   const int LEVEL_THREE_MULTIPLIER = 30;
+   const int LEVEL_FOUR_MULTIPLIER = 50;
+   const int LEVEL_FIVE_MULTIPLIER = 100;
+   const int LOSING_MULTIPLIER = 0;
+
+   string string1 = thePull.getString1();
+   string string2 = thePull.getString2();
+   string string3 = thePull.getString3();
+
+   if (string1 == "cherries") {
+      if (string2 != "cherries") {
+         return LEVEL_ONE_MULTIPLIER;
+      }
+      else if (string3 != "cherries") {
+         return LEVEL_TWO_MULTIPLIER;
+      }
+      else {
+         return LEVEL_THREE_MULTIPLIER;
+      }
+   }
+   else if (string1 == "BAR" && string2 == "BAR" && string3 == "BAR") {
+      return LEVEL_FOUR_MULTIPLIER;
+   }
+   else if (string1 == "7" && string2 == "7" && string3 == "7") {
+      return LEVEL_FIVE_MULTIPLIER;
+   }
+
+   return LOSING_MULTIPLIER;
+}
+
+void display(TripleString thePull, int winnings)
+{
+   const int LOSING_AMOUNT = 0;
+   const string SPACE = " ";
+
+   string string1 = thePull.getString1();
+   string string2 = thePull.getString2();
+   string string3 = thePull.getString3();
+
+   cout << "\nwhirrr ... and your pull is ... \n\n";
+   cout << string1 << SPACE << string2 << SPACE << string3;
+
+   if (winnings == LOSING_AMOUNT) {
+      cout << "\n\nSorry, you lose.\n\n";
+      return;
+   }
+
+   cout << "\nCongratulations, you win: " << winnings << "\n\n";
+   return;
+}
+
+// Class method definitions
+TripleString::TripleString()
+{
+   string1 = "";
+   string2 = "";
+   string3 = "";
+}
+
+bool TripleString::validString(string str)
+{
+   return str.length() <= MAX_LEN;
+}
+
+bool TripleString::setString1(string str)
+{
+   if (!validString(str))
+      return false;
+   string1 = str;
+   return true;
+}
+
+bool TripleString::setString2(string str)
+{
+   if (!validString(str))
+      return false;
+   string2 = str;
+   return true;
+}
+
+bool TripleString::setString3(string str)
+{
+   if (!validString(str))
+      return false;
+   string3 = str;
+   return true;
+}
+
+string TripleString::getString1()
+{
+   return string1;
+}
+
+string TripleString::getString2()
+{
+   return string2;
+}
+
+string TripleString::getString3()
+{
+   return string3;
+}
+
+
+
+
+
+
+"BAR BAR BAR" Pull Numbers: 6, 33, 43
+"cherries cherries cherries" Pull Numbers: 44
+
+
+/* -------------------------- Paste of Run -------------------------------------
+
+ How much would you like to bet (1 - 20) OR 0 to quit? -1
+ How much would you like to bet (1 - 20) OR 0 to quit? 21
+ How much would you like to bet (1 - 20) OR 0 to quit? 1
+
+ whirrr ... and your pull is ...
+
+ BAR cherries 7
+
+ Sorry, you lose.
+
+ How much would you like to bet (1 - 20) OR 0 to quit? 20
+
+ whirrr ... and your pull is ...
+
+ cherries BAR 7
+ Congratulations, you win: 100
+
+ How much would you like to bet (1 - 20) OR 0 to quit? 19
+
+ whirrr ... and your pull is ...
+
+ cherries 7 BAR
+ Congratulations, you win: 95
+
+ How much would you like to bet (1 - 20) OR 0 to quit? 2
+
+ whirrr ... and your pull is ...
+
+ BAR cherries cherries
+
+ Sorry, you lose.
+
+ How much would you like to bet (1 - 20) OR 0 to quit? 18
+
+ whirrr ... and your pull is ...
+
+ 7 cherries 7
+
+ Sorry, you lose.
+
+ How much would you like to bet (1 - 20) OR 0 to quit? 5
+
+ whirrr ... and your pull is ...
+
+ BAR BAR BAR
+ Congratulations, you win: 250
+
+ How much would you like to bet (1 - 20) OR 0 to quit? 4
+
+ whirrr ... and your pull is ...
+
+ cherries BAR BAR
+ Congratulations, you win: 20
+
+ How much would you like to bet (1 - 20) OR 0 to quit? 3
+
+ whirrr ... and your pull is ...
+
+ cherries BAR cherries
+ Congratulations, you win: 15
+
+ How much would you like to bet (1 - 20) OR 0 to quit? 2
+
+ whirrr ... and your pull is ...
+
+ cherries BAR space
+ Congratulations, you win: 10
+
+ How much would you like to bet (1 - 20) OR 0 to quit? 5
+
+ whirrr ... and your pull is ...
+
+ 7 BAR BAR
+
+ Sorry, you lose.
+
+ How much would you like to bet (1 - 20) OR 0 to quit? 6
+
+ whirrr ... and your pull is ...
+
+ space BAR BAR
+
+ Sorry, you lose.
+
+ How much would you like to bet (1 - 20) OR 0 to quit? 7
+
+ whirrr ... and your pull is ...
+
+ cherries BAR BAR
+ Congratulations, you win: 35
+
+ How much would you like to bet (1 - 20) OR 0 to quit? 4
+
+ whirrr ... and your pull is ...
+
+ 7 cherries 7
+
+ Sorry, you lose.
+
+ How much would you like to bet (1 - 20) OR 0 to quit? 3
+
+ whirrr ... and your pull is ...
+
+ BAR cherries 7
+
+ Sorry, you lose.
+
+ How much would you like to bet (1 - 20) OR 0 to quit? 2
+
+ whirrr ... and your pull is ...
+
+ 7 BAR 7
+
+ Sorry, you lose.
+
+ How much would you like to bet (1 - 20) OR 0 to quit? 4
+
+ whirrr ... and your pull is ...
+
+ cherries BAR 7
+ Congratulations, you win: 20
+
+ How much would you like to bet (1 - 20) OR 0 to quit? 7
+
+ whirrr ... and your pull is ...
+
+ 7 cherries BAR
+
+ Sorry, you lose.
+
+ How much would you like to bet (1 - 20) OR 0 to quit? 8
+
+ whirrr ... and your pull is ...
+
+ cherries BAR cherries
+ Congratulations, you win: 40
+
+ How much would you like to bet (1 - 20) OR 0 to quit? 3
+
+ whirrr ... and your pull is ...
+
+ cherries 7 BAR
+ Congratulations, you win: 15
+
+ How much would you like to bet (1 - 20) OR 0 to quit? 5
+
+ whirrr ... and your pull is ...
+
+ space BAR BAR
+
+ Sorry, you lose.
+
+ How much would you like to bet (1 - 20) OR 0 to quit? 4
+
+ whirrr ... and your pull is ...
+
+ BAR cherries cherries
+
+ Sorry, you lose.
+
+ How much would you like to bet (1 - 20) OR 0 to quit? 3
+
+ whirrr ... and your pull is ...
+
+ BAR BAR cherries
+
+ Sorry, you lose.
+
+ How much would you like to bet (1 - 20) OR 0 to quit? 2
+
+ whirrr ... and your pull is ...
+
+ 7 BAR BAR
+
+ Sorry, you lose.
+
+ How much would you like to bet (1 - 20) OR 0 to quit? 1
+
+ whirrr ... and your pull is ...
+
+ BAR space 7
+
+ Sorry, you lose.
+
+ How much would you like to bet (1 - 20) OR 0 to quit? 11
+
+ whirrr ... and your pull is ...
+
+ BAR BAR cherries
+
+ Sorry, you lose.
+
+ How much would you like to bet (1 - 20) OR 0 to quit? 12
+
+ whirrr ... and your pull is ...
+
+ BAR cherries BAR
+
+ Sorry, you lose.
+
+ How much would you like to bet (1 - 20) OR 0 to quit? 16
+
+ whirrr ... and your pull is ...
+
+ BAR cherries BAR
+
+ Sorry, you lose.
+
+ How much would you like to bet (1 - 20) OR 0 to quit? 5
+
+ whirrr ... and your pull is ...
+
+ 7 BAR BAR
+
+ Sorry, you lose.
+
+ How much would you like to bet (1 - 20) OR 0 to quit? 3
+
+ whirrr ... and your pull is ...
+
+ BAR space BAR
+
+ Sorry, you lose.
+
+ How much would you like to bet (1 - 20) OR 0 to quit? 7
+
+ whirrr ... and your pull is ...
+
+ BAR cherries space
+
+ Sorry, you lose.
+
+ How much would you like to bet (1 - 20) OR 0 to quit? 8
+
+ whirrr ... and your pull is ...
+
+ 7 BAR BAR
+
+ Sorry, you lose.
+
+ How much would you like to bet (1 - 20) OR 0 to quit? 3
+
+ whirrr ... and your pull is ...
+
+ 7 cherries cherries
+
+ Sorry, you lose.
+
+ How much would you like to bet (1 - 20) OR 0 to quit? 4
+
+ whirrr ... and your pull is ...
+
+ BAR BAR BAR
+ Congratulations, you win: 200
+
+ How much would you like to bet (1 - 20) OR 0 to quit? 5
+
+ whirrr ... and your pull is ...
+
+ cherries BAR space
+ Congratulations, you win: 25
+
+ How much would you like to bet (1 - 20) OR 0 to quit? 6
+
+ whirrr ... and your pull is ...
+
+ 7 BAR BAR
+
+ Sorry, you lose.
+
+ How much would you like to bet (1 - 20) OR 0 to quit? 7
+
+ whirrr ... and your pull is ...
+
+ cherries 7 space
+ Congratulations, you win: 35
+
+ How much would you like to bet (1 - 20) OR 0 to quit? 2
+
+ whirrr ... and your pull is ...
+
+ 7 BAR BAR
+
+ Sorry, you lose.
+
+ How much would you like to bet (1 - 20) OR 0 to quit? 4
+
+ whirrr ... and your pull is ...
+
+ BAR cherries 7
+
+ Sorry, you lose.
+
+ How much would you like to bet (1 - 20) OR 0 to quit? 5
+
+ whirrr ... and your pull is ...
+
+ BAR space cherries
+
+ Sorry, you lose.
+
+ How much would you like to bet (1 - 20) OR 0 to quit? 3
+
+ whirrr ... and your pull is ...
+
+ space cherries BAR
+
+ Sorry, you lose.
+
+ How much would you like to bet (1 - 20) OR 0 to quit? 6
+
+ whirrr ... and your pull is ...
+
+ cherries cherries 7
+ Congratulations, you win: 90
+
+ How much would you like to bet (1 - 20) OR 0 to quit? 20
+
+ whirrr ... and your pull is ...
+
+ BAR space cherries
+
+ Sorry, you lose.
+
+ How much would you like to bet (1 - 20) OR 0 to quit? 3
+
+ whirrr ... and your pull is ...
+
+ BAR BAR BAR
+ Congratulations, you win: 150
+
+ How much would you like to bet (1 - 20) OR 0 to quit? 5
+
+ whirrr ... and your pull is ...
+
+ cherries cherries cherries
+ Congratulations, you win: 150
+
+ How much would you like to bet (1 - 20) OR 0 to quit? 0
+ Program ended with exit code: 0
+
+----------------------------------------------------------------------------- */
